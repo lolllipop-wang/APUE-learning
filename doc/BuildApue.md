@@ -16,4 +16,4 @@
 ### make 完成后，将apue.h和libapue.a分别移动到/usr/include和/usr/lib(方便起见)， 移动到其他文件夹， 编译书上的程序时再指定include 和 lib目录。
   $ sudo cp ./include/apue.h /usr/include/
   $ sudo cp ./lib/libapue.a /usr/lib/
-### 实例 cc -o demo demo.c -lapue
+### 示例： cc -o demo demo.c -lapue
