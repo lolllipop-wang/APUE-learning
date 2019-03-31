@@ -14,6 +14,7 @@ main(int argc, char *argv[])
     
     int fd;
     int count;
+    char *it;
     ssize_t numRead;
     off_t offset;
     off_t real_offset;
@@ -42,8 +43,9 @@ main(int argc, char *argv[])
     printf("total bytes requested: %ld, bytes read: %ld\n", (long)count, numRead);
     if(numRead < count)
         err_sys("Read fewer bytes than requested");
-    for(char *i = buf; i != (buf + numRead); i++)
-        printf("%c", *i);
+    
+    for(it = buf; it != (buf + numRead); it++)
+        printf("%c", *it);
     printf("\n");
     exit(EXIT_SUCCESS);
 }
