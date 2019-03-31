@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
 
 	int fd, n, ap, len, i;
 	char *buf;
+	off_t offset;
 	mode_t mod = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
 
 	if((fd = open(argv[1], O_RDWR | O_CREAT, mod)) == -1) {
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 					err_sys("end of file");
 				}
 
-				printf("%s: ", argv[ap]);
+				printf("%s: \n", argv[ap]);
 
 				for(i = 0; i < n; ++i) {
 					if(argv[ap][0] == 'r')
@@ -44,7 +45,13 @@ int main(int argc, char *argv[])
 			case 'w':
 				if((n = write(fd, argv[ap] + 1, strlen(argv[ap] + 1))) < 0)
 					err_sys("write error");
-				printf("%s : worte %ld butes\n", argv[ap], (long)n);
+				printf("%s : worte %ld bytes\n", argv[ap], (long)n);
+				break;
+			case 's':
+				offset = atol(argv[ap] + 1);
+				if((lseek(fd, offset, SEEK_SET)) < 0)
+					err_sys("lseek error");
+				printf("%s: seek successed!\n", argv[ap]);
 				break;
 			default:
 				err_sys("We have a big truble");
