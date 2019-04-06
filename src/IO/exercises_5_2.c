@@ -11,7 +11,7 @@ main(int argc, char *argv[])
     int fd;
     ssize_t num_write;
     mode_t mode = S_IRUSR | S_IWUSR;
-    char *buf = "\n/*这时我用程序添加的一行注释。。。*/";
+    char *buf = "\n/*这是我用程序添加的一行注释。。。*/";
     char *file = "./exercises_5_2.c";
 
     if((fd = open(file, O_RDWR | O_CREAT | O_APPEND, mode)) < 0)
