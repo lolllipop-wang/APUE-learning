@@ -9,10 +9,14 @@ int main(int argc, char *argv[])
 {
 	if(argc < 3)
 		err_sys("usage: ReadAndWrite in out");
+
 	int InputFileNO, OutputFileNO;
+	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+
 	if((InputFileNO = open(argv[1], O_RDONLY)) < 0)
 		err_sys("open input file error");
-	if((OutputFileNO = open(argv[2], O_RDWR | O_CREAT | O_SYNC)) < 0)
+		
+	if((OutputFileNO = open(argv[2], O_RDWR | O_CREAT | O_SYNC, mode)) < 0)
 		err_sys("open output file error");
 	
 	int n;
