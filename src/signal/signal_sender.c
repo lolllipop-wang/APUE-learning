@@ -15,6 +15,9 @@ main(int argc, char *argv[])
     num_sig = atoi(argv[2]);
     sig     = atoi(argv[3]);
 
+    /**
+     * 向PID为PID的进程发送sig信号sig_num次。
+     */
     printf("%s: sending signal %d to process %ld %d times\n", argv[0], sig, pid, num_sig);
 
     for(i = 0; i < num_sig; ++i)
@@ -23,8 +26,11 @@ main(int argc, char *argv[])
             err_sys("kill error");
     }
 
+    /**
+     * 如果存在第四个参数，将第四个信号表示的信号发送给指定进程。
+     */
     if(argc > 4)
-        if(kill(pid, atoi(argv[3])) == -1)
+        if(kill(pid, atoi(argv[4])) == -1)
             err_sys("kill error");
 
 
