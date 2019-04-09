@@ -1,3 +1,7 @@
+/**
+ * 
+ * 使用sigaction 替换 signal实现signal receiver
+ */
 #define _GNU_SOURCE
 #include <apue.h>
 #include "../../include/signal_functions.h"
