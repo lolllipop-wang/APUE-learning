@@ -8,6 +8,7 @@
  */
 #define _GNU_SOURCE
 #include <apue.h>
+#include <limits.h>
 #include "../../include/signal_functions.h"
 
 static volatile sig_atomic_t sig_int = 0;
@@ -18,7 +19,9 @@ my_signal_handler(int sig)
     if(sig == SIGINT) {
         sig_int = 1;
         psignal(sig, "caught a signal when blocking");
-        sleep(5);
+        int i;
+        for(i = 0; i < INT_MAX; ++i)
+            printf("%d\n", i);
     }
 }
 
@@ -42,7 +45,7 @@ main(int argc, char *argv[])
     //if(sigprocmask(SIG_SETMASK, &blocking_mask, NULL) == -1)
         //err_sys("sigprocmast error");
     
-    printf("first waitting fro SIGINT\n");
+    printf("first waitting for SIGINT\n");
     while(sig_int == 0) continue;
     /*
     if(sigpending(&pending_mask) == -1)
