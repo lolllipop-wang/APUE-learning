@@ -2,7 +2,7 @@
 #include <apue.h>
 #include "../../include/signal_functions.h"
 
-static volatile sig_atomic_t sig_int;
+static volatile sig_atomic_t sig_int = 0;
 
 static int sig_cnt[NSIG];
 
@@ -22,21 +22,21 @@ main(int argc, char *argv[])
 {
     int sig, num_sec;
     sigset_t blocking_mask, pending_mask, empty_mask;
-    struct sigaction action[NSIG];
+    struct sigaction action;
     
     printf("%s: PID is %ld\n", argv[0], (long)getpid());
 
-    
+    action.sa_flags = 0;
+    action.sa_handler = my_signal_handler;
+    sigemptyset(&action.sa_mask);
+
     for(sig = 1; sig < NSIG; ++sig) {
-        action[sig].sa_handler = my_signal_handler;
-        action[sig].sa_flags = 0;
-        sigemptyset(&action[sig].sa_mask);
-        sigaddset(&action[sig].sa_mask, SIGQUIT);
-        if(sigaction(sig, &action[sig], NULL) == -1)
+        if(sig == SIGKILL || sig == SIGSTOP || sig == 32 || sig == 33)
+            continue;
+        if(sigaction(sig, &action, NULL) == -1)
             err_sys("sigaction error");
     }
         
-    
     if(argc > 1) {
         num_sec = atoi(argv[1]);
 
@@ -52,7 +52,7 @@ main(int argc, char *argv[])
         if(sigpending(&pending_mask) == -1)
             err_sys("sigpending error");
         
-        printf("%s: Pending signals are: \n");
+        printf("%s: Pending signals are: \n", argv[0]);
         print_sigset(stdout, "Pending signals:\t", &pending_mask);
         
         sigemptyset(&empty_mask);
