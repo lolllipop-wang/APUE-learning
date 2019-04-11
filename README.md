@@ -1,5 +1,5 @@
-# APUE-learning
-《UNIX环境高级编程》学习笔记
+# Programming in the UNINX Environment
+UNIX环境编程学习
 
 ## 编译构建apue环境方法见./doc/BuildApue.md
 ## 学习和拓展的代码见./src
