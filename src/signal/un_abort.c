@@ -9,7 +9,7 @@ static sigjmp_buf env;
 
 static void handler(int sig)
 {
-    printf("Received signal %d(%s), sigmask is:\n");
+    printf("Received signal %d(%s), sigmask is:\n", sig,strsignal(sig));
     print_sig_mask(stdout, "\t\t");
 
     if(can_jmp == 0) {
