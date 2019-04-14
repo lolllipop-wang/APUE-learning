@@ -4,8 +4,21 @@ static volatile sig_atomic_t can_abort = 0;
 
 static void my_abort()
 {
-    if(kill(getpid(), SIGABRT) == -1)
-        err_sys("my_abrot error");
+    struct sigaction sa;
+
+    sigfillset(&sa.sa_mask);
+    sigdelset(&sa.sa_mask, SIGABRT);
+    sigprocmask(SIG_SETMASK, &sa, NULL);
+    raise(SIGABRT);
+
+
+    sa.sa_handler = SIG_DFL;
+    sa.sa_flags = 0;
+    sigfillset(&sa.sa_mask);
+    sigdelset(&sa.sa_mask, SIGABRT);
+    sigprocmask(SIG_SETMASK, &sa, NULL);
+
+    exit(1);
 }
 
 static void handler(int sig)
