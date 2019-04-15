@@ -17,7 +17,7 @@ static void my_abort()
     sigfillset(&sa.sa_mask);
     sigdelset(&sa.sa_mask, SIGABRT);
     sigprocmask(SIG_SETMASK, &sa, NULL);
-
+    raise(SIGABRT);
     exit(1);
 }
 
