@@ -1,73 +1,91 @@
+/**
+ * 
+ * 面试的时候被面试官问到的题
+ * 将一个大文件翻转，直接使用lseek，甚至栈都不需要，只需要一个缓冲区
+ */
+
 #include <apue.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdlib.h>
 
-#define MAXBUFFSIZE 256
+#define MAXBUFFSIZE 4096
+#define SUBFILENUMS 4
 
 char buf[MAXBUFFSIZE];
+
+void reversebuf(char *buf, int length);  /* useless */
+int  read_line(int fd, char *buf, int max_length);
 
 int main(int argc, char *argv[])
 {
     if(argc != 3) 
         err_quit("usage: %s input_file output_file", argv[0]);
     
-    off_t offset;
-    int sub_fd[10];
-    int input_fd, output_fd;
+    int input_fd, output_fd, sub_fd[SUBFILENUMS];
+    int num_read, num_write;
+    off_t offset, input_file_length;
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
 
-    if((input_fd = open(argv[1], O_RDWR | O_EXCL)) < 0)
-        err_sys("open input_file error");
-    
-    if((offset = lseek(input_fd, 0, SEEK_END)) < 0)
-        err_sys("input seek error");
-    if(lseek(input_fd, 0, SEEK_SET) < 0)
-        err_sys("input seek error");
+    if((input_fd = open(argv[1], O_RDONLY)) < 0)                    /* open input file */
+        err_sys("open input file error");
 
-    
-    int step = offset / 2 + 1;
-
-    int byte_count = 0;
-    int num_read = 0;
-    int num_write = 0;
-    int block_num = 2;
-    int i;
-    char file_name[10] = "0.data";
-    for(i = 0; i < block_num; ++i) {
-        file_name[0] = i + '0';
-        if((sub_fd[i] = open(file_name, O_RDWR | O_CREAT, mode)) < 0)
-            err_sys("create sub file %d error", i);
-        
-        num_read = 0;
-        num_write = 0;
-        while((num_read = read(input_fd, buf, MAXBUFFSIZE)) > 0) {
-            if((num_write = write(sub_fd[i], buf, num_read)) != num_read)
-                err_sys("write error");
-            byte_count += num_read;
-            if(byte_count >= (i + 1) * step)
-                break;
-        }
-
-        close(sub_fd[i]);
-    }
-
-    if((output_fd = open(argv[2], O_RDWR | O_CREAT, mode)) < 0)
+    if((output_fd = open(argv[2], O_RDWR | O_CREAT, mode)) < 0)     /* open output file */
         err_sys("open output file error");
-    
-    for(i = block_num - 1; i >= 0; --i) {
-        file_name[0] = i + '0';
 
-        if((sub_fd[i] = open(file_name, O_RDWR | O_CREAT, mode)) < 0)
-            err_sys("create sub file %d error", i);
+    if((input_file_length = lseek(input_fd, 0, SEEK_END)) < 0)      
+        err_sys("seek error");
+    
+    printf("input file length: %d bytes\n", input_file_length);
+
+    if(lseek(input_fd, 0, SEEK_SET) < 0)
+        err_sys("seek error");
+
+    if(lseek(output_fd, input_file_length, SEEK_SET) < 0)
+        err_sys("seek error");
+
+
+    while((num_read = read_line(input_fd, buf, MAXBUFFSIZE)) > 0) {
+
+        if(lseek(output_fd, -num_read, SEEK_CUR) < 0)
+            err_sys("seek error");
+
+        if((num_write = write(output_fd, buf, num_read)) != num_read)
+            err_sys("write error");
         
-        while((num_read = read(sub_fd[i], buf, MAXBUFFSIZE)) > 0) {
-            if((num_write = write(output_fd, buf, num_read)) != num_read)
-                err_sys("write error");
-        }
-
-        close(sub_fd[i]);
+        if(lseek(output_fd, -num_read, SEEK_CUR) < 0)
+            err_sys("seek error");
     }
-    
     exit(0);
+}
+
+void reversebuf(char *buf, int length)  /* useless */
+{
+    if(buf == NULL || length == 0)
+        return;
+    
+    char *p = buf, *q = buf + length - 1, c;
+
+    while(p <= q) {
+        c = *p;
+        *p = *q;
+        *q = c;
+        *p++;
+        *q--;
+    }
+}
+
+int read_line(int fd, char *buf, int max_length)
+{
+    if(buf == NULL)
+        return -1;
+    int cnt = 0;
+
+    while(read(fd, buf, 1) > 0) {
+        cnt++;
+        buf++;
+        if(*(buf - 1) == '\n' || cnt >= max_length)
+            break;
+    }
+    return cnt;
 }
