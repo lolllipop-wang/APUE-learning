@@ -19,7 +19,8 @@ static void handler(int sig, siginfo_t *info, void *ucontext)
 
     printf("caught signal %d\n", sig);
     printf("\tsi_signo = %d(%s), si_code = %d(%s), si_value = %d\n",
-            info -> si_signo, strsignal(info -> si_signo), info -> si_code, sig_code_buf, info -> si_value.sival_int);
+            info -> si_signo, strsignal(info -> si_signo), info -> si_code, 
+            sig_code_buf, info -> si_value.sival_int);
     printf("\tPID = %ld, UID = %ld\n", (long)info -> si_pid, (long)info -> si_uid);
     sleep(handler_sleep_time);
 }
