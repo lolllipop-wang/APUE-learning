@@ -1,3 +1,6 @@
+/**
+ * 使用fork()和exec函数运行另一个程序
+ */
 #include <apue.h>
 #include <sys/wait.h>
 
