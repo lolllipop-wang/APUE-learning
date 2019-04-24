@@ -6,7 +6,7 @@
 int main(int argc, char *argv[])
 {
     if(argc < 2)
-        err_quit("usgae: %s sec1 sec2 sec3...");
+        err_quit("usgae: %s sec1 sec2 sec3...", argv[0]);
 
     setbuf(stdout, NULL);
 
