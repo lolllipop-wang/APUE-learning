@@ -6,7 +6,7 @@ extern char **environ;
 int main(int argc, char *argv[])
 {
     if(argc < 2)
-        err_sys("usage: %s progname args...");
+        err_sys("usage: %s progname args...", argv[0]);
     
     pid_t pid;
 
