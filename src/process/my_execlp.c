@@ -88,7 +88,7 @@ static int my_execlp(char *name, const char *arg, ...)
 
     strcpy(cur, path);
 
-    /* 分解PATH变量 */
+    /* 分解PATH变量*/
     while ((p = strsep(&cur, ":")) != NULL) {
 
         if(*p == '\0') {
