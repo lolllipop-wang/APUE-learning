@@ -15,6 +15,49 @@
 
 extern char **environ;
 
+static int my_execlp(char *name, const char *arg, ...);
+
+int main(int argc, char *argv[])
+{
+    
+    char    buf[MAXLINE]; /* MAXLINE在apue.h中定义，限制一行输入的最大字符数 */
+    pid_t   pid;
+    int     status;
+
+    printf("<[shell]>%% ");
+    while(fgets(buf, MAXLINE, stdin) != NULL) {
+        int length = strlen(buf);
+        if(buf[length - 1] == '\n')
+            buf[length - 1] = 0;
+
+        if(strcmp(buf, "exit") == 0) { /* 输入exit命令时结束程序，退出shell */
+            printf("Bye bye!\n");
+            return 0;
+        }
+        
+        switch ((pid = fork()))
+        {
+            case -1:
+                err_msg("fork error");
+                break;
+            case 0:
+                my_execlp(buf, buf, (char *)0);
+                err_ret("couldn't execute: %s", buf);
+                exit(127);
+            default:
+                break;
+        }
+
+        if((pid = waitpid(pid, &status, 0)) < 0) {
+            err_sys("waitpid error");
+        }
+        
+        printf("<[shell]>%% ");
+    }
+    printf("\n");
+    exit(0);
+}
+
 static int my_execlp(char *name, const char *arg, ...)
 {
     va_list ap;                         /* 获取可变长参数 */
@@ -30,13 +73,13 @@ static int my_execlp(char *name, const char *arg, ...)
 
     /* 开始构建argv */
     va_start(ap, arg);
-    n = 1;
+    argc = 1;
     while(va_arg(ap, char *) != NULL)               /* 获取arg的数量 */
         argc++;
     
     argv = alloca((argc + 1) * sizeof(char *));
 
-    if(argv != NULL) {
+    if(argv == NULL) {
         errno = ENOMEM;
         return -1;
     }
@@ -72,6 +115,8 @@ static int my_execlp(char *name, const char *arg, ...)
         return -1;
     }
     /* 开始尝试执行execve */
+
+    eacces = 0;
 
     /* 如果是一个绝对路径 */
     if(strchr(name, '/') != NULL) {
@@ -109,12 +154,12 @@ static int my_execlp(char *name, const char *arg, ...)
         bcopy(name, buf + lp + 1, ln);
         buf[lp + 1 + ln] = '\0';
 
-retry:  execve(p, argv, envp);
+retry:  execve(bp, argv, envp);
 
         switch (errno)
         {
             case E2BIG:         /* 参数长度过长 */
-                //TODO goto done;
+                goto done;
                 break;           
             case ELOOP:         /* 符号连接层数过多 */
             case ENAMETOOLONG:  /* 文件名过长 */
@@ -129,7 +174,7 @@ retry:  execve(p, argv, envp);
 
                 if(memp = NULL) {
                     errno = ENOMEM;
-                    //TODO goto done;
+                    goto done;
                 }
                 memp[0] = "sh";
                 memp[1] = bp;
@@ -165,51 +210,14 @@ retry:  execve(p, argv, envp);
                 }
                 errno = saved_errno;
                 goto done;
-                break;
         }
     }
 
     if(eacces == 1)
         errno = EACCES;
-        else errno = ENOENT;
+    else 
+        errno = ENOENT;
 
 done:   /* 函数执行失败 */
     return -1;
-}
-
-int main(int argc, char *argv[])
-{
-    char    buf[MAXLINE]; /* MAXLINE在apue.h中定义，限制一行输入的最大字符数 */
-    pid_t   pid;
-    int     status;
-
-    printf("<[shell]>%% ");
-    while(fgets(buf, MAXLINE, stdin) != NULL) {
-        
-        int length = strlen(buf);
-        if(buf[length - 1] == '\n')
-            buf[length - 1] = 0;
-
-        if(strcmp(buf, "exit") == 0) { /* 输入exit命令时结束程序，退出shell */
-            printf("Bye bye!\n");
-            return 0;
-        }
-       
-        if((pid = fork()) < 0) {
-            err_sys("fork error");
-        }
-        
-        else if(pid == 0) {
-            execlp(buf, buf, (char *)0);
-            err_ret("couldn't execute: %s", buf);
-            exit(127);
-        }
-
-        if((pid = waitpid(pid, &status, 0)) < 0) {
-            err_sys("waitpid error");
-        }
-        printf("<[shell]>%% ");
-    }
-    printf("\n");
-    exit(0);
 }
