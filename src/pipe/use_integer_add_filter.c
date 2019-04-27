@@ -18,6 +18,7 @@ static void handler(int sig)
 {
     printf("caught signal %d(%s)\n", 
             sig, strsignal(sig));   /* unsafe */
+    exit(1);
 }
 
 int main(void)
