@@ -9,7 +9,7 @@
 #include <apue.h>
 #include <sys/wait.h>
 
-#define DEF_PAGER "/usr/bin/more"       /* 如果PATH中不存在PAGER变量，则默认使用'/usr/bin/more' */
+#define DEF_PAGER "/usr/bin/more"       /* 如果环境变量中不存在PAGER变量，则默认使用'/usr/bin/more' */
 
 int main(int argc, char *argv[])
 {
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
                 close(fd[0]);                           /* 此时fd[0]已经没用了 */
             }
 
-            if((pager = getenv("PAGER")) == NULL)       /* 尝试从PATH中获取PAGER变量的值 */
+            if((pager = getenv("PAGER")) == NULL)       /* 尝试从环境变量中获取PAGER变量的值 */
                 pager = DEF_PAGER;                      /* 如果获取失败就使用默认的'/usr/bin/more' */
             
             if((argv0 = strrchr(pager, '/')) != NULL)   /* 检测pager字符串最右端是否有'/' */
