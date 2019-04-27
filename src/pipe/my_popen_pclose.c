@@ -30,7 +30,7 @@ FILE *my_popen(const char *cmd, char *type)
 
 
     if(childpid == NULL) {                      /* 第一次调用my_popen时为childpid申请空间 */
-        max_fd = my_open_max();
+        max_fd = open_max();
 
         childpid = calloc(max_fd, sizeof(pid_t));
 
