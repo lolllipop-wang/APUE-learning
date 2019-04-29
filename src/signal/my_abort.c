@@ -1,3 +1,6 @@
+/**
+ * 实现abort。
+ */
 #include <apue.h>
 
 static volatile sig_atomic_t can_abort = 0;
@@ -6,17 +9,24 @@ static void my_abort()
 {
     struct sigaction sa;
 
+    /**
+     * 阻塞SIGABRT除外的所有信号，abort不需要返回。
+     */
     sigfillset(&sa.sa_mask);
     sigdelset(&sa.sa_mask, SIGABRT);
-    sigprocmask(SIG_SETMASK, &sa, NULL);
+    sigprocmask(SIG_SETMASK, &sa.sa_mask, NULL);
     raise(SIGABRT);
 
-
+    /**
+     * 如果上面的操作没有成功，将信号处理函数置为SIG_DEL，
+     * 再次尝试。
+     */
     sa.sa_handler = SIG_DFL;
     sa.sa_flags = 0;
     sigfillset(&sa.sa_mask);
+    sigaction(SIGABRT, &sa, NULL);
     sigdelset(&sa.sa_mask, SIGABRT);
-    sigprocmask(SIG_SETMASK, &sa, NULL);
+    sigprocmask(SIG_SETMASK, &sa.sa_mask, NULL);
     raise(SIGABRT);
     exit(1);
 }
