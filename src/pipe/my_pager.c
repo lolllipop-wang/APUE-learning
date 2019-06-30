@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         err_quit("usage: %s file", argv[0]);
     
     fp = fopen(argv[1], "r");                           /* 打开文件 */
-    if(fd == NULL)
+    if(fp == NULL)
         err_sys("%s: open file error", argv[0]);
     
     if(pipe(fd) < 0)                                    /* 创建管道 */
