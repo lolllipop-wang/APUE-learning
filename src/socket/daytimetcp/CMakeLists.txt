@@ -14,6 +14,3 @@ add_definitions(-g)
 
 add_executable(Client daytimetcp_client.cpp)
 add_executable(Server daytimetcp_server.cpp)
-
-target_link_libraries(Client apue)
-target_link_libraries(Server apue)

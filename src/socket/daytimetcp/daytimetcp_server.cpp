@@ -1,8 +1,10 @@
 //TCP获取时间服务端程序
-#include <apue.h>
-#include <ctime>
-#include <cstdio>
-#include <cstring>
+#include <err.h>
+#include <time.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -18,7 +20,7 @@ int main(int argc, char *argv[])
     time_t ticks;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        err_sys("socket error");
+        err(EXIT_FAILURE, "socket error");
     
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
@@ -26,17 +28,17 @@ int main(int argc, char *argv[])
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
-        err_sys("bind error");
+        err(EXIT_FAILURE, "bind error");
     
     if (listen(listenfd, 10) < 0)
-        err_sys("listen error");
+        err(EXIT_FAILURE, "listen error");
     
     for (;;) {
         connfd = accept(listenfd, nullptr, nullptr);
         ticks = time(nullptr);
         snprintf(buf, sizeof(buf), "%.24s\r\n", ctime(&ticks));
         if ((nwrite = send(connfd, buf, strlen(buf), 0)) < 0)
-            err_sys("write error");
+            err(EXIT_FAILURE, "write error");
         
         close(connfd);
     }
