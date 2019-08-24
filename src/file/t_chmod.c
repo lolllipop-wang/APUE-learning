@@ -11,7 +11,11 @@
  * Return 0 on success, or -1 on error.
  * ====================================================================
  */
-#include <apue.h>
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 int main(int argc, char *argv[])
@@ -20,14 +24,14 @@ int main(int argc, char *argv[])
 
 
     if (stat("foo", &st) < 0)
-        err_sys("stat error for foo");
+        err(EXIT_FAILURE, "stat error for foo");
 
     if (chmod("foo", (st.st_mode & ~S_IXGRP) | S_ISGID) < 0)
-        err_sys("chmod error for foo");
+        err(EXIT_FAILURE, "chmod error for foo");
     
     /* rw-r--r-- */
     if(chmod("bar", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0)
-        err_sys("chmod error for bar");
+        err(EXIT_FAILURE, "chmod error for bar");
 
     exit(0);
 }
