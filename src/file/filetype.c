@@ -10,7 +10,10 @@
  * 
  * #define S_ISDIR(mode) (((node) & S_IFMT) == S_IFDIR)
  */
-#include <apue.h>
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,7 +24,7 @@ int main(int argc, char *argv[])
         printf("%s: ", argv[i]);
 
         if(lstat(argv[i], &file) < 0) {
-            err_ret("%s: lstat error", argv[0]);
+            err(EXIT_FAILURE, "%s: lstat error", argv[0]);
             continue;
         }
 

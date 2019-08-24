@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
         err(EXIT_FAILURE, "listen error");
     
     for (;;) {
-        connfd = accept(listenfd, nullptr, nullptr);
-        ticks = time(nullptr);
+        connfd = accept(listenfd, NULL, NULL);
+        ticks = time(NULL);
         snprintf(buf, sizeof(buf), "%.24s\r\n", ctime(&ticks));
         if ((nwrite = send(connfd, buf, strlen(buf), 0)) < 0)
             err(EXIT_FAILURE, "write error");
