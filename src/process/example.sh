@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#! /usr/bin/bash
 
 case `uname -s` in
 "FreeBSD")
