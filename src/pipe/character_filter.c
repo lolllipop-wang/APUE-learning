@@ -5,22 +5,21 @@
 #include <apue.h>
 #include <ctype.h>
 
-#define NOFILTER(c) ((c >= 'a' && c <= 'z')||\
-                     (c >= 'A' && c <= 'Z')||\
-                     (c >= '0' && c <= '9')||c == '\n')
+#define NOFILTER(c)                                                            \
+  ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||                         \
+   (c >= '0' && c <= '9') || c == '\n')
 
-int main(int argc, char *argv[])
-{
-    int c;
-    while((c = getchar()) != EOF) {
-        if(!NOFILTER(c))
-            continue;
-        if(!isupper(c))
-            c = toupper(c);
-        if(putchar(c) == EOF)
-            err_sys("%s: output error", argv[0]);
-        if(c == '\n')
-            fflush(stdout);
-    }
-    exit(0);
+int main(int argc, char *argv[]) {
+  int c;
+  while ((c = getchar()) != EOF) {
+    if (!NOFILTER(c))
+      continue;
+    if (!isupper(c))
+      c = toupper(c);
+    if (putchar(c) == EOF)
+      err_sys("%s: output error", argv[0]);
+    if (c == '\n')
+      fflush(stdout);
+  }
+  exit(0);
 }

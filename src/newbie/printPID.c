@@ -4,10 +4,9 @@
  */
 #include <apue.h>
 
-int main()
-{
-    pid_t pid;
-    pid = getpid();
-    printf("Hello world from process ID %ld\n", (long)pid);
-    return 0;
+int main() {
+  pid_t pid;
+  pid = getpid();
+  printf("Hello world from process ID %ld\n", (long)pid);
+  return 0;
 }
