@@ -1,23 +1,32 @@
-#include <apue.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 char buf1[] = "abcdefghij";
 char buf2[] = "ABCDEFGHIJ";
 
-int main()
-{
-	int fd;
-	if((fd = creat("file.hole", FILE_MODE)) < 0)
-		err_sys("create file error");
+int main() {
+  int fd;
+  if ((fd = creat("file.hole", 0666)) < 0) {
+    fprintf(stderr, "create file error\n");
+    exit(1);
+  }
 
-	if(write(fd, buf1, 10) != 10)
-		err_sys("write error");
+  if (write(fd, buf1, 10) != 10) {
+    fprintf(stderr, "write error\n");
+    exit(1);
+  }
 
-	if(lseek(fd, 16384, SEEK_SET) == -1)
-		err_sys("lseek error");
+  if (lseek(fd, 16384, SEEK_SET) == -1) {
+    fprintf(stderr, "lseek error\n");
+    exit(1);
+  }
 
-	if(write(fd, buf2, 10) != 10)
-		err_sys("write error");
-	return 0;
+  if (write(fd, buf2, 10) != 10) {
+    fprintf(stderr, "write error\n");
+    exit(1);
+  }
+
+  return 0;
 }
-

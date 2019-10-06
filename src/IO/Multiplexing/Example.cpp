@@ -1,3 +1,4 @@
+/// from freebsd manual
 #include <err.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -5,7 +6,7 @@
 #include <string.h>
 #include <sys/event.h>
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   struct kevent event;  /* Event we want to monitor */
   struct kevent tevent; /* Event triggered */
   int kq, fd, ret;
