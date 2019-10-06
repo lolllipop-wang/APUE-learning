@@ -1,13 +1,9 @@
 // 遍历文件
 
+#include <dirent.h>
 #include <err.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
-#include <limits.h>
 
-int main()
-{
-    
-    return 0;
-}
+int main() { return 0; }
