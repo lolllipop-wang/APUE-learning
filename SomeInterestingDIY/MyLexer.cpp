@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   if (argc != 4) {
     fprintf(stderr,
             "usage: %s  <sources file> "
-            "<target file> <keywords file>",
+            "<target file> <keywords file>\n",
             argv[0]);
     exit(1);
   }
@@ -66,7 +66,7 @@ void Initialize() {
   printf("Begin Initialize\n");
   FILE *fp = nullptr;
   if ((fp = fopen(KeywordsFile, "r")) == nullptr) {
-    fprintf(stderr, "Failed to open %s", KeywordsFile);
+    fprintf(stderr, "Failed to open %s\n", KeywordsFile);
     exit(1);
   }
 
@@ -94,12 +94,12 @@ void Preprocessed() {
   char line[MAXLINE];
 
   if ((ifp = fopen(SourceFile, "r")) == nullptr) {
-    fprintf(stderr, "can't open source file");
+    fprintf(stderr, "can't open source file\n");
     exit(1);
   }
 
   if ((ofp = fopen("temp", "w")) == nullptr) {
-    fprintf(stderr, "can't open output file");
+    fprintf(stderr, "can't open output file\n");
     exit(1);
   }
 
@@ -180,7 +180,7 @@ newline:
 void MainProcess() {
   if ((TempFileFp = fopen("temp", "r")) ==
       nullptr) { /* 打开预处理产生的文件temp */
-    fprintf(stderr, "open temp file error");
+    fprintf(stderr, "open temp file error\n");
     exit(1);
   }
 
@@ -197,7 +197,7 @@ void MainProcess() {
 #ifdef RELEASE
   FILE *TargetFileFp;
   if ((TargetFileFp = fopen(TargetFile, "w")) == nullptr) {
-    fprintf(stderr, "open target file error");
+    fprintf(stderr, "open target file error\n");
     exit(1);
   }
   std::vector<Token>::iterator it;
