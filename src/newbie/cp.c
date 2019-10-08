@@ -5,22 +5,25 @@
  * ./cp < inputfile > outputfile
  */
 
-#include <apue.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #define BUFFSIZE 4096
 
 int main() {
-  int n;
-  char buf[BUFFSIZE];
+    size_t n;
+    char buf[BUFFSIZE];
 
-  while ((n = read(STDIN_FILENO, buf, BUFFSIZE)) > 0) {
-    if (write(STDOUT_FILENO, buf, n) != n) {
-      err_sys("write error");
+    while ((n = read(STDIN_FILENO, buf, BUFFSIZE)) > 0) {
+        if (write(STDOUT_FILENO, buf, n) != n) {
+            fprintf(stderr, "write error\n");
+        }
     }
-  }
 
-  if (n < 0) {
-    err_sys("read error");
-  }
-  return 0;
+    if (n < 0) {
+        fprintf(stderr, "read error\n");
+        exit(1);
+    }
+    return 0;
 }

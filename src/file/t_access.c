@@ -21,27 +21,27 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-  if (argc != 2)
-    err(EXIT_FAILURE, "usage: %s <pathname>", argv[0]);
+    if (argc != 2)
+        err(EXIT_FAILURE, "usage: %s <pathname>", argv[0]);
 
-  if (access(argv[1], R_OK) < 0)
-    err(EXIT_FAILURE, "read access error for %s", argv[1]);
-  else
-    printf("read access OK\n");
+    if (access(argv[1], R_OK) < 0)
+        err(EXIT_FAILURE, "read access error for %s", argv[1]);
+    else
+        printf("read access OK\n");
 
-  if (access(argv[1], W_OK) < 0)
-    err(EXIT_FAILURE, "write access error for %s", argv[1]);
-  else
-    printf("write access OK\n");
+    if (access(argv[1], W_OK) < 0)
+        err(EXIT_FAILURE, "write access error for %s", argv[1]);
+    else
+        printf("write access OK\n");
 
-  if (access(argv[1], X_OK) < 0)
-    err(EXIT_FAILURE, "execute access error for %s", argv[1]);
-  else
-    printf("execute access OK\n");
+    if (access(argv[1], X_OK) < 0)
+        err(EXIT_FAILURE, "execute access error for %s", argv[1]);
+    else
+        printf("execute access OK\n");
 
-  if (open(argv[1], O_RDONLY) < 0)
-    err(EXIT_FAILURE, "open error for %s", argv[1]);
-  else
-    printf("open for reading OK\n");
-  exit(0);
+    if (open(argv[1], O_RDONLY) < 0)
+        err(EXIT_FAILURE, "open error for %s", argv[1]);
+    else
+        printf("open for reading OK\n");
+    exit(0);
 }

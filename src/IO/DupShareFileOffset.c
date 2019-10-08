@@ -9,60 +9,60 @@
 char buf[MAXBUFFSIZE];
 
 int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    fprintf(stderr, "Usage: %s file\n", argv[0]);
-    exit(1);
-  }
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s file\n", argv[0]);
+        exit(1);
+    }
 
-  int fd, newfd;
-  ssize_t step = 100;
-  ssize_t num_read;
-  if ((fd = open(argv[1], O_RDONLY)) < 0) {
-    fprintf(stderr, "open file error\n");
-    exit(1);
-  }
+    int fd, newfd;
+    ssize_t step = 100;
+    ssize_t num_read;
+    if ((fd = open(argv[1], O_RDONLY)) < 0) {
+        fprintf(stderr, "open file error\n");
+        exit(1);
+    }
 
-  printf("###########\n");
-  printf("fd read begin\n");
+    printf("###########\n");
+    printf("fd read begin\n");
 
-  num_read = read(fd, buf, step);
+    num_read = read(fd, buf, step);
 
-  if (num_read < 0) {
-    fprintf(stderr, "fd read error\n");
-    exit(1);
-  }
+    if (num_read < 0) {
+        fprintf(stderr, "fd read error\n");
+        exit(1);
+    }
 
-  if (num_read < step) {
-    printf("fd read fewer bytes\n");
-  }
+    if (num_read < step) {
+        printf("fd read fewer bytes\n");
+    }
 
-  printf("fd read %lld bytes\n", (long long)num_read);
+    printf("fd read %lld bytes\n", (long long)num_read);
 
-  buf[num_read] = '\0';
+    buf[num_read] = '\0';
 
-  printf("fd read:\n%s\nfd read end\n\n", buf);
-  printf("###########\n");
+    printf("fd read:\n%s\nfd read end\n\n", buf);
+    printf("###########\n");
 
-  if ((newfd = dup(fd)) < 0) {
-    fprintf(stderr, "dup error\n");
-    exit(1);
-  }
+    if ((newfd = dup(fd)) < 0) {
+        fprintf(stderr, "dup error\n");
+        exit(1);
+    }
 
-  printf("###########\n");
-  printf("new fd read begin\n");
+    printf("###########\n");
+    printf("new fd read begin\n");
 
-  num_read = read(newfd, buf, step);
+    num_read = read(newfd, buf, step);
 
-  if (num_read < 0) {
-    fprintf(stderr, "new fd read error\n");
-    exit(1);
-  }
+    if (num_read < 0) {
+        fprintf(stderr, "new fd read error\n");
+        exit(1);
+    }
 
-  if (num_read < step)
-    printf("new fd read fewer bytes\n");
-  printf("new fd read %lld bytes\n", (long long)num_read);
-  buf[num_read] = '\0';
-  printf("new fd read:\n%s\nnew fd read end\n\n", buf);
-  printf("###########\n");
-  exit(EXIT_SUCCESS);
+    if (num_read < step)
+        printf("new fd read fewer bytes\n");
+    printf("new fd read %lld bytes\n", (long long)num_read);
+    buf[num_read] = '\0';
+    printf("new fd read:\n%s\nnew fd read end\n\n", buf);
+    printf("###########\n");
+    exit(EXIT_SUCCESS);
 }

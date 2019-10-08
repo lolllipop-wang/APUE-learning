@@ -19,17 +19,17 @@
 #include <unistd.h>
 
 int main(int argc, char *argv[]) {
-  struct stat st;
+    struct stat st;
 
-  if (stat("foo", &st) < 0)
-    err(EXIT_FAILURE, "stat error for foo");
+    if (stat("foo", &st) < 0)
+        err(EXIT_FAILURE, "stat error for foo");
 
-  if (chmod("foo", (st.st_mode & ~S_IXGRP) | S_ISGID) < 0)
-    err(EXIT_FAILURE, "chmod error for foo");
+    if (chmod("foo", (st.st_mode & ~S_IXGRP) | S_ISGID) < 0)
+        err(EXIT_FAILURE, "chmod error for foo");
 
-  /* rw-r--r-- */
-  if (chmod("bar", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0)
-    err(EXIT_FAILURE, "chmod error for bar");
+    /* rw-r--r-- */
+    if (chmod("bar", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) < 0)
+        err(EXIT_FAILURE, "chmod error for bar");
 
-  exit(0);
+    exit(0);
 }

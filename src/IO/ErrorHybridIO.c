@@ -6,10 +6,10 @@
 #include <unistd.h>
 
 int main(void) {
-  char buf1[] = "This is message 1";
-  char buf2[] = "This is message 2";
+    char buf1[] = "This is message 1";
+    char buf2[] = "This is message 2";
 
-  printf("%s", buf1);
-  write(STDOUT_FILENO, buf2, sizeof(buf2));
-  exit(0);
+    printf("%s", buf1);
+    write(STDOUT_FILENO, buf2, sizeof(buf2));
+    exit(0);
 }

@@ -15,76 +15,76 @@
 #include <apue.h>
 
 static void handler(int sig) {
-  printf("caught signal %d(%s)\n", sig, strsignal(sig)); /* unsafe */
-  exit(1);
+    printf("caught signal %d(%s)\n", sig, strsignal(sig)); /* unsafe */
+    exit(1);
 }
 
 int main(void) {
-  pid_t pid;
-  int length;
-  char buf[MAXLINE];
-  int pipefd1[2], pipefd2[2];
-  struct sigaction sa;
+    pid_t pid;
+    int length;
+    char buf[MAXLINE];
+    int pipefd1[2], pipefd2[2];
+    struct sigaction sa;
 
-  sigemptyset(&sa.sa_mask);
-  sa.sa_flags = 0;
-  sa.sa_handler = handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sa.sa_handler = handler;
 
-  if (sigaction(SIGPIPE, &sa, NULL) < 0)
-    err_sys("setting up SIGPIPE handler error");
+    if (sigaction(SIGPIPE, &sa, NULL) < 0)
+        err_sys("setting up SIGPIPE handler error");
 
-  if (pipe(pipefd1) < 0 || pipe(pipefd2) < 0)
-    err_sys("pipe error");
+    if (pipe(pipefd1) < 0 || pipe(pipefd2) < 0)
+        err_sys("pipe error");
 
-  switch ((pid = fork())) {
-  case -1:
-    err_sys("fork error");
+    switch ((pid = fork())) {
+        case -1:
+            err_sys("fork error");
 
-  case 0:              /* child */
-    close(pipefd1[1]); /* 关闭不需要的文件描述符 */
-    close(pipefd2[0]);
+        case 0:                /* child */
+            close(pipefd1[1]); /* 关闭不需要的文件描述符 */
+            close(pipefd2[0]);
 
-    if (pipefd1[0] != STDIN_FILENO) { /* 将标准输入重定向到管道1的读端 */
-      if (dup2(pipefd1[0], STDIN_FILENO) != STDIN_FILENO)
-        err_sys("dup2 error");
-      close(pipefd1[0]);
+            if (pipefd1[0] != STDIN_FILENO) { /* 将标准输入重定向到管道1的读端 */
+                if (dup2(pipefd1[0], STDIN_FILENO) != STDIN_FILENO)
+                    err_sys("dup2 error");
+                close(pipefd1[0]);
+            }
+
+            if (pipefd2[1] != STDOUT_FILENO) { /* 将标准输出重定向到管道2的写端 */
+                if (dup2(pipefd2[1], STDOUT_FILENO) != STDOUT_FILENO)
+                    err_sys("dup2 error");
+                close(pipefd2[1]);
+            }
+            /* 执行过滤程序 */
+            execl("./integer_add_filter", "integer_add_filter", (char *)NULL);
+            _exit(127);
+        default:
+            break;
     }
 
-    if (pipefd2[1] != STDOUT_FILENO) { /* 将标准输出重定向到管道2的写端 */
-      if (dup2(pipefd2[1], STDOUT_FILENO) != STDOUT_FILENO)
-        err_sys("dup2 error");
-      close(pipefd2[1]);
+    close(pipefd1[0]);
+    close(pipefd2[1]);
+
+    while (fgets(buf, MAXLINE, stdin) != NULL) {
+        length = strlen(buf);
+
+        if (write(pipefd1[1], buf, length) != length)
+            err_sys("write error to pipe");
+
+        if ((length = read(pipefd2[0], buf, MAXLINE)) < 0)
+            err_sys("read from pipe error");
+
+        if (length == 0)
+            err_sys("child closed pipe");
+
+        buf[length] = 0;
+
+        if (fputs(buf, stdout) == EOF)
+            err_sys("fputs yo stdout error");
     }
-    /* 执行过滤程序 */
-    execl("./integer_add_filter", "integer_add_filter", (char *)NULL);
-    _exit(127);
-  default:
-    break;
-  }
 
-  close(pipefd1[0]);
-  close(pipefd2[1]);
+    if (ferror(stdin))
+        err_sys("fgets from stdin error");
 
-  while (fgets(buf, MAXLINE, stdin) != NULL) {
-    length = strlen(buf);
-
-    if (write(pipefd1[1], buf, length) != length)
-      err_sys("write error to pipe");
-
-    if ((length = read(pipefd2[0], buf, MAXLINE)) < 0)
-      err_sys("read from pipe error");
-
-    if (length == 0)
-      err_sys("child closed pipe");
-
-    buf[length] = 0;
-
-    if (fputs(buf, stdout) == EOF)
-      err_sys("fputs yo stdout error");
-  }
-
-  if (ferror(stdin))
-    err_sys("fgets from stdin error");
-
-  exit(0);
+    exit(0);
 }

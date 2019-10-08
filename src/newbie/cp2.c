@@ -4,18 +4,21 @@
  * cc -o cp2 cp2.c -lapue
  * cp2 < inputfile > outputfile
  */
-#include <apue.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main() {
-  int c;
-  while ((c = getc(stdin)) != EOF) {
-    if (putc(c, stdout) == EOF) {
-      err_sys("output error");
+    int c;
+    while ((c = getc(stdin)) != EOF) {
+        if (putc(c, stdout) == EOF) {
+            fprintf(stderr, "output error\n");
+            exit(1);
+        }
     }
-  }
 
-  if (ferror(stdin)) {
-    err_sys("input error");
-  }
-  return 0;
+    if (ferror(stdin)) {
+        fprintf(stderr, "input error\n");
+        exit(1);
+    }
+    return 0;
 }
